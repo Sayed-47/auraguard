@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f4ef">
+  <meta name="description" content="Live baby-unit connectivity, receiver status, and fall and sound alerts in one clear dashboard.">
+  <title>AuraGuard · Baby Monitor</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="./assets/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./style.css?v=4">
+  <script src="./receiver-profile.js?v=4" defer></script>
+  <script src="./app.js?v=4" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to dashboard</a>
+  <div id="app"></div>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <dialog id="dialog" aria-labelledby="dialog-title"></dialog>
+  <noscript><main class="no-script"><h1>AuraGuard</h1><p>Enable JavaScript to use the monitoring dashboard. The base station’s physical alarms operate independently.</p></main></noscript>
+</body>
+</html>
