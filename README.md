@@ -33,6 +33,10 @@ Replace `COM4` with the listed Uno port, then open **http://127.0.0.1:8000**. On
 
 The final dashboard uses `uno-room-v1`, the default server profile. It displays live hardware data only. Without the local gateway and a connected Uno, it remains waiting or disconnected. The hosted page cannot access the computer's USB port; use the locally served page for the lab.
 
+## Live docs page
+
+The same gateway serves a live documentation page at **http://127.0.0.1:8000/docs**: pitch deck, architecture and data flow, on-device AI model cards read from the shipped weight files, live receiver counters and events, the running server's own API table, tech-doc links, and the team roster. Manage it at `/docs/admin` (admin token in `server/data/docs-config.json`): toggle public visibility on/off, schedule an availability window, edit every pitch section, and add team members with auto-resized photos. Everything on the page is assembled per request from the running server and the on-disk config — nothing is a static screenshot.
+
 ## Connected hardware
 
 **ESP32 + MPU6050 + sound sensor → BLE room module → Uno → USB serial at 9600 baud → Python gateway → browser.**
@@ -98,6 +102,7 @@ The receiver clears its sound flag after more than 2.5 seconds without another `
 | `firmware/tests/host_ai/` | Host-compiled cross-check of the sketch's AI math against Python. |
 | `firmware/README.md` | Supplied wiring/settings and separate legacy reference notes. |
 | `server/` | Local serial gateway, API, persistence, AI pipeline (`server/ai/`), and tests. |
+| `server/docs_module.py`, `server/docs_static/` | Live `/docs` page: visibility-gated pitch deck, tech docs, and token-protected admin panel. |
 | `dist/` | Browser app and bundled assets. |
 
 ## Storage and verification

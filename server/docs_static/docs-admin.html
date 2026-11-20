@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>AuraGuard Docs — Admin</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/assets/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/docs-assets/docs.css">
+  <script src="/docs-assets/docs-admin.js" defer></script>
+</head>
+<body>
+  <main class="admin-wrap" id="main">
+    <p class="eyebrow">AURAGUARD DOCS MODULE</p>
+    <h1>Docs admin</h1>
+    <p class="admin-note">Edits save to the gateway's config file and appear on the public <a href="/docs">/docs</a> page within seconds. The token lives in <code>server/data/docs-config.json</code>.</p>
+
+    <section class="admin-card" id="gate">
+      <h2>Admin token</h2>
+      <div class="field">
+        <label for="token-input">Token</label>
+        <input type="password" id="token-input" autocomplete="off" placeholder="paste the admin_token value">
+      </div>
+      <div class="admin-actions">
+        <button class="btn btn-primary" id="token-save">Unlock</button>
+        <span class="status-line" id="gate-status"></span>
+      </div>
+    </section>
+
+    <div id="panel" class="hidden">
+      <section class="admin-card">
+        <h2>Visibility &amp; scheduling</h2>
+        <p class="status-line" id="visibility-status"></p>
+        <label class="check-row"><input type="checkbox" id="vis-enabled"> Public page enabled</label>
+        <div class="field-row">
+          <div class="field">
+            <label for="vis-from">Visible from (optional)</label>
+            <input type="datetime-local" id="vis-from">
+          </div>
+          <div class="field">
+            <label for="vis-until">Visible until (optional)</label>
+            <input type="datetime-local" id="vis-until">
+          </div>
+        </div>
+        <p class="hint">Leave a date empty for no bound. OFF, or outside the window, makes /docs and /api/docs answer 404.</p>
+        <div class="admin-actions">
+          <button class="btn btn-primary" id="vis-save">Save visibility</button>
+        </div>
+      </section>
+
+      <section class="admin-card">
+        <h2>Pitch deck</h2>
+        <div class="field"><label for="p-name">Product name</label><input id="p-name" maxlength="120"></div>
+        <div class="field"><label for="p-tagline">Tagline</label><textarea id="p-tagline" maxlength="400"></textarea></div>
+        <div class="field"><label for="p-problem">Problem</label><textarea id="p-problem"></textarea></div>
+        <div class="field"><label for="p-users">Users</label><textarea id="p-users"></textarea></div>
+        <div class="field"><label for="p-approach">Approach</label><textarea id="p-approach"></textarea></div>
+        <div class="field"><label for="p-features">Key features (one per line, max 12)</label><textarea id="p-features" style="min-height:150px"></textarea></div>
+        <div class="field-row">
+          <div class="field"><label for="p-repo">Repository URL</label><input id="p-repo" maxlength="400"></div>
+          <div class="field"><label for="p-video">Video URL (optional override)</label><input id="p-video" maxlength="400" placeholder="defaults to the bundled pitch MP4"></div>
+        </div>
+        <div class="admin-actions">
+          <button class="btn btn-primary" id="pitch-save">Save pitch</button>
+        </div>
+      </section>
+
+      <section class="admin-card">
+        <h2>Team</h2>
+        <div id="team-list"></div>
+        <h3 style="margin:18px 0 10px">Add member</h3>
+        <div class="field-row">
+          <div class="field"><label for="t-name">Name</label><input id="t-name" maxlength="120"></div>
+          <div class="field"><label for="t-role">Role</label><input id="t-role" maxlength="160"></div>
+        </div>
+        <div class="field"><label for="t-email">Email</label><input id="t-email" type="email" maxlength="254"></div>
+        <div class="admin-actions">
+          <button class="btn btn-primary" id="team-add">Add member</button>
+        </div>
+      </section>
+    </div>
+  </main>
+  <div class="toast" id="toast"></div>
+</body>
+</html>

@@ -30,8 +30,10 @@ from typing import Literal
 
 try:
     from .state import MAX_LINE_BYTES, PROTOCOLS, Monitor, Store
+    from .docs_module import register_docs_routes
 except ImportError:
     from state import MAX_LINE_BYTES, PROTOCOLS, Monitor, Store
+    from docs_module import register_docs_routes
 
 
 HERE = Path(__file__).resolve().parent
@@ -50,6 +52,13 @@ PROJECT_FILES = (
     "dist/assets/OFL-Manrope.txt",
     "server/app.py",
     "server/state.py",
+    "server/docs_module.py",
+    "server/docs_static/docs.html",
+    "server/docs_static/docs.css",
+    "server/docs_static/docs.js",
+    "server/docs_static/docs-admin.html",
+    "server/docs_static/docs-admin.js",
+    "server/test_docs.py",
     "server/requirements.txt",
     "server/requirements-test.txt",
     "server/test_gateway.py",
@@ -110,6 +119,7 @@ class Settings:
     database: Path | str | None = None
     static_dir: Path = HERE.parent / "dist"
     protocol: str = "uno-room-v1"
+    docs_config: Path | None = None
 
     def __post_init__(self):
         if self.protocol not in PROTOCOLS:
@@ -245,7 +255,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             await asyncio.gather(*tasks, return_exceptions=True)
             store.close()
 
-    app = FastAPI(title="AuraGuard local gateway", version="1.0.0", lifespan=lifespan)
+    # docs_url/redoc_url are disabled: /docs belongs to the live documentation module.
+    app = FastAPI(title="AuraGuard local gateway", version="1.0.0", lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
 
     @app.get("/api/status")
     async def status(request: Request):
@@ -343,6 +354,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             },
         )
 
+    register_docs_routes(app, settings)
+
     # API routes come before the static mount so /api and /ws retain their routes.
     if settings.static_dir.is_dir():
         app.mount("/", StaticFiles(directory=str(settings.static_dir), html=True), name="dashboard")
@@ -381,6 +394,7 @@ def main():
     config = Settings(port=args.port, baud=args.baud, database=args.db, protocol=args.protocol)
     print("AuraGuard: LIVE — waiting for hardware")
     print(f"Protocol: {args.protocol}")
+    print("Docs module: /docs (public) and /docs/admin (token in server/data/docs-config.json)")
     if args.protocol == "baby-ble-v5":
         print("Read-only event mode: the room unit must forward exact OK / FALL / CRY lines over USB serial.")
     print(f"Open http://{args.host}:{args.http_port}")

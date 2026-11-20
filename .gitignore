@@ -21,3 +21,6 @@ Thumbs.db
 # Host-compiled firmware test artifacts (regenerate via gen_vectors.py + g++)
 firmware/tests/host_ai/host_test.exe
 firmware/tests/host_ai/*_vectors.csv
+
+# Docs module runtime data (admin token, edited config, team photos)
+server/data/

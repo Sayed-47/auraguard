@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f4ef">
+  <meta name="description" content="AuraGuard live documentation: pitch, architecture, on-device AI, live system data, API reference, and team.">
+  <title>AuraGuard — Live Docs</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/assets/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/docs-assets/docs.css">
+  <script src="/docs-assets/docs.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="/docs">
+        <span class="brand-mark" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.5-2.2 8-6.6 8-11V5.5L12 2 4 5.5V11c0 4.4 2.5 8.8 8 11z"/><path d="M9 11.5l2 2 4-4.5"/></svg>
+        </span>
+        <span class="brand-name">AuraGuard <span>Docs</span></span>
+      </a>
+      <nav class="topnav" aria-label="Sections">
+        <a href="#pitch">Pitch</a>
+        <a href="#features">Features</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#ai">On-device AI</a>
+        <a href="#live">Live data</a>
+        <a href="#api">API</a>
+        <a href="#tech-docs">Tech docs</a>
+        <a href="#team">Team</a>
+      </nav>
+      <div class="topbar-side">
+        <span class="pill" id="status-pill"><span class="dot"></span><span id="status-text">connecting…</span></span>
+        <a class="btn btn-small" href="/">Dashboard</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="hero">
+      <p class="eyebrow">LIVE DOCUMENTATION · SERVED BY THE RUNNING GATEWAY</p>
+      <h1 id="product-name">AuraGuard</h1>
+      <p class="tagline" id="tagline"></p>
+      <div class="hero-chips" id="hero-chips"></div>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="/">Open the live dashboard</a>
+        <a class="btn" id="repo-link" href="#" target="_blank" rel="noopener">Source on GitHub</a>
+      </div>
+    </section>
+
+    <section id="pitch" class="section">
+      <h2>The pitch</h2>
+      <div class="pitch-grid">
+        <article class="card">
+          <h3>Problem</h3>
+          <p id="pitch-problem"></p>
+        </article>
+        <article class="card">
+          <h3>Users</h3>
+          <p id="pitch-users"></p>
+        </article>
+        <article class="card">
+          <h3>Approach</h3>
+          <p id="pitch-approach"></p>
+        </article>
+      </div>
+      <div class="video-wrap hidden" id="video-wrap">
+        <video id="pitch-video" controls preload="metadata"></video>
+      </div>
+    </section>
+
+    <section id="features" class="section">
+      <h2>Key features</h2>
+      <div class="feature-grid" id="feature-grid"></div>
+    </section>
+
+    <section id="architecture" class="section">
+      <h2>Architecture &amp; data flow</h2>
+      <p class="section-note">Node borders reflect the live link state, refreshed every few seconds from the gateway.</p>
+      <div class="flow" id="flow">
+        <div class="flow-node" data-node="sensors">
+          <span class="flow-title">Sensors</span>
+          <span class="flow-detail">MPU6050 accel + gyro<br>Sound sensor 2 kHz<br>BLE link RSSI</span>
+        </div>
+        <span class="flow-arrow" aria-hidden="true"></span>
+        <div class="flow-node" data-node="esp32">
+          <span class="flow-title">ESP32 baby unit</span>
+          <span class="flow-detail">Feature extraction<br>Softmax inference<br>Alert fusion</span>
+        </div>
+        <span class="flow-arrow" aria-hidden="true"></span>
+        <div class="flow-node" data-node="ble">
+          <span class="flow-title">BLE room module</span>
+          <span class="flow-detail">GATT FFE0 / FFE1<br>OK · FALL · CRY · WANDER</span>
+        </div>
+        <span class="flow-arrow" aria-hidden="true"></span>
+        <div class="flow-node" data-node="uno">
+          <span class="flow-title">Uno receiver</span>
+          <span class="flow-detail">LEDs + buzzer<br>Physical ACK / ARM</span>
+        </div>
+        <span class="flow-arrow" aria-hidden="true"></span>
+        <div class="flow-node" data-node="gateway">
+          <span class="flow-title">Python gateway</span>
+          <span class="flow-detail">FastAPI · SQLite<br>USB serial 9600</span>
+        </div>
+        <span class="flow-arrow" aria-hidden="true"></span>
+        <div class="flow-node" data-node="dashboard">
+          <span class="flow-title">Browser</span>
+          <span class="flow-detail">Dashboard<br>This docs page</span>
+        </div>
+      </div>
+      <h3 class="subhead">Stack</h3>
+      <table class="table" id="stack-table">
+        <thead><tr><th>Layer</th><th>What it does</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section id="ai" class="section">
+      <h2>On-device AI</h2>
+      <p class="section-note">Model metadata below is read live from the shipped weight files (<code>server/ai/weights/*.json</code>), not from a hard-coded slide. Training, features, and verification: <a id="ai-doc-link" href="https://github.com/Sayed-47/auraguard/blob/main/docs/AI.md" target="_blank" rel="noopener">docs/AI.md</a>.</p>
+      <div class="model-grid" id="model-grid"></div>
+    </section>
+
+    <section id="live" class="section">
+      <h2>Live system data</h2>
+      <p class="section-note">Straight from <code>/api/status</code> and the event store of this running gateway. With no receiver attached it honestly shows a waiting state.</p>
+      <div class="counter-grid" id="counter-grid"></div>
+      <div class="live-columns">
+        <article class="card">
+          <h3>Recent events</h3>
+          <ul class="event-list" id="event-list"></ul>
+        </article>
+        <article class="card">
+          <h3>Session</h3>
+          <dl class="kv" id="session-info"></dl>
+        </article>
+      </div>
+    </section>
+
+    <section id="api" class="section">
+      <h2>API reference</h2>
+      <p class="section-note">Enumerated from the running server's route table — it cannot drift out of date.</p>
+      <table class="table" id="api-table">
+        <thead><tr><th>Method</th><th>Path</th><th>Summary</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section id="tech-docs" class="section">
+      <h2>Technical documents</h2>
+      <ul class="doc-list" id="doc-list"></ul>
+    </section>
+
+    <section id="team" class="section">
+      <h2>Team</h2>
+      <div class="team-grid" id="team-grid"></div>
+    </section>
+
+    <footer class="footer">
+      <p>AuraGuard reports what the room receiver actually logged. It does not make an independent medical or safety assessment, and it is not medical-grade fall detection.</p>
+      <p><a href="/docs/admin">Admin</a> · <a href="/">Dashboard</a> · <a id="footer-repo" href="#" target="_blank" rel="noopener">GitHub</a></p>
+    </footer>
+  </main>
+  <noscript><p style="padding:40px">Enable JavaScript to view the live documentation page.</p></noscript>
+</body>
+</html>
