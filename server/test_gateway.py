@@ -387,7 +387,7 @@ class UnoRoomTests(unittest.TestCase):
         self.assertIsNone(receiver["muted_until"])
         self.assertEqual(result["connection"]["status"], "waiting")
         self.assertIsNone(result["connection"]["last_seen"])
-        self.assertEqual(receiver["counters"], {"fall_reports": 1, "cry_episodes": 1, "acknowledgments": 1})
+        self.assertEqual(receiver["counters"], {"fall_reports": 1, "cry_episodes": 1, "acknowledgments": 1, "wander_reports": 0})
         self.assertTrue(any(e["type"] == "fall" for e in result["events"]))
 
     def test_healthy_periodic_status_does_not_clear_fall(self):
@@ -512,7 +512,7 @@ class UnoRoomTests(unittest.TestCase):
             self.assertFalse(self.monitor.ingest_line(line), line)
         self.clock.advance(1)
         self.assertFalse(self.monitor.snapshot()["receiver"]["fresh"])
-        self.assertEqual(self.monitor.snapshot()["receiver"]["counters"], {"fall_reports": 0, "cry_episodes": 0, "acknowledgments": 0})
+        self.assertEqual(self.monitor.snapshot()["receiver"]["counters"], {"fall_reports": 0, "cry_episodes": 0, "acknowledgments": 0, "wander_reports": 0})
 
     def test_unknown_message_timer_reset_and_link_notices_are_not_valid_baby_tokens(self):
         self.line("Baby unit LINKED (first message received)")
@@ -650,7 +650,7 @@ class LiveReceiverApiTests(unittest.TestCase):
                 self.assertEqual(snapshot["mode"], "live")
                 self.assertFalse(snapshot["connection"]["serial"])
                 self.assertFalse(snapshot["connection"]["bluetooth"])
-                self.assertEqual(snapshot["receiver"]["counters"], {"fall_reports": 0, "cry_episodes": 0, "acknowledgments": 0})
+                self.assertEqual(snapshot["receiver"]["counters"], {"fall_reports": 0, "cry_episodes": 0, "acknowledgments": 0, "wander_reports": 0})
                 self.assertFalse(snapshot["capabilities"]["numeric_telemetry"])
                 self.assertFalse(snapshot["capabilities"]["hardware_controls"])
                 self.assertIsNone(snapshot["telemetry"]["sound_level"])

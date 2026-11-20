@@ -37,6 +37,7 @@ ROOM_LINES = {
     "!!! FALL ALERT from baby unit !!!", "CRY reported by baby unit", "cry ended",
     "!!! LINK LOST - no signal from baby unit !!!", "ACKNOWLEDGED (sent ACK to baby unit)",
     "ARMED", "DISARMED",
+    "!!! WANDER - baby near Bluetooth range limit !!!", "wander cleared",
 }
 CRY_BURST_GAP_SECONDS = 3.0
 
@@ -244,9 +245,10 @@ class Monitor:
         self.receiver_last_line: str | None = None
         self.receiver_fall_active: bool | None = None
         self.receiver_cry_active: bool | None = None
+        self.receiver_wander_active: bool | None = None
         self.receiver_link_lost: bool | None = None
         self.receiver_mute_known = False
-        self.receiver_counts = {"fall_reports": 0, "cry_episodes": 0, "acknowledgments": 0}
+        self.receiver_counts = {"fall_reports": 0, "cry_episodes": 0, "acknowledgments": 0, "wander_reports": 0}
         self._receiver_invalidated = False
         self._receiver_baby_report: str | None = None
         self._receiver_baby_anchor_mono: float | None = None
@@ -337,6 +339,7 @@ class Monitor:
         self.armed = None
         self.receiver_fall_active = None
         self.receiver_cry_active = None
+        self.receiver_wander_active = None
         self.receiver_link_lost = None
         self.muted_until = None
         self.receiver_mute_known = False
@@ -415,6 +418,7 @@ class Monitor:
             self._receiver_invalidated = False
             self.armed = True
             self.receiver_fall_active = self.receiver_cry_active = self.receiver_link_lost = False
+            self.receiver_wander_active = False
             self.receiver_mute_known = True
             self.receiver_last_status_at = None
             self.receiver_last_status_mono = None
@@ -428,6 +432,7 @@ class Monitor:
             # unknown when that transition was missed.
             if self.armed is not None and self.armed != reported_armed:
                 self.receiver_fall_active = None
+                self.receiver_wander_active = None
                 self.muted_until = None
                 self.receiver_mute_known = False
                 self._receiver_timer_reset_mono = now_mono
@@ -436,6 +441,7 @@ class Monitor:
                 self.last_wearable_at = None
             if baby == "waiting" and self._receiver_baby_report not in {None, "waiting"}:
                 self.receiver_fall_active = None
+                self.receiver_wander_active = None
                 self.muted_until = None
                 self.receiver_mute_known = False
             self.armed = reported_armed
@@ -474,6 +480,16 @@ class Monitor:
             self._room_infer_armed()
             self.receiver_cry_active = False
             self.event("cry", "info", "Sound alert ended", "The room unit cleared its sound alert after its CRY-message timeout.")
+        elif line == "!!! WANDER - baby near Bluetooth range limit !!!":
+            self._room_infer_armed()
+            self._room_baby_message(now_mono, now)
+            self.receiver_wander_active = True
+            self.receiver_counts["wander_reports"] += 1
+            self.event("connection", "warning", "Baby near Bluetooth range limit", "The baby unit reports a weak link RSSI for 8+ seconds. It may soon leave the room module's range; the receiver's link-loss alarm follows if it does.")
+        elif line == "wander cleared":
+            self._room_infer_armed()
+            self.receiver_wander_active = False
+            self.event("connection", "info", "Wander warning cleared", "The baby unit is back inside the safe Bluetooth range or stopped reporting WANDER.")
         elif line == "!!! LINK LOST - no signal from baby unit !!!":
             self._room_infer_armed()
             self.receiver_link_lost = True
@@ -488,6 +504,7 @@ class Monitor:
         elif line in {"ARMED", "DISARMED"}:
             self.armed = line == "ARMED"
             self.receiver_fall_active = self.receiver_cry_active = self.receiver_link_lost = False
+            self.receiver_wander_active = False
             # checkButtons resets lastBabyMsg without receiving a radio packet.
             self._receiver_timer_reset_mono = now_mono
             self._receiver_baby_anchor_mono = None
@@ -749,6 +766,7 @@ class Monitor:
                 "armed": self.armed if self.receiver_fresh() else None,
                 "fall_active": self.receiver_fall_active if self.receiver_fresh() else None,
                 "cry_active": self.receiver_cry_active if self.receiver_fresh() else None,
+                "wander_active": self.receiver_wander_active if self.receiver_fresh() else None,
                 "link_lost": self.receiver_link_lost if self.receiver_fresh() else None,
                 "muted_until": muted_until if self.receiver_fresh() else None,
                 "mute_known": self.receiver_mute_known if self.receiver_fresh() else False,

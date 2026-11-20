@@ -40,6 +40,8 @@ This line does not contain `fallActive`, `mutedUntil`, raw sensor measurements, 
 | `ACKNOWLEDGED (sent ACK to baby unit)` | Physical ACK cleared fall, started 15 seconds of muting, and wrote `ACK` toward the baby. |
 | `ARMED` | Physical ARM toggle enabled alarms and cleared fall, cry, and link-loss flags. |
 | `DISARMED` | Physical ARM toggle disabled alarms and cleared fall, cry, and link-loss flags. |
+| `!!! WANDER - baby near Bluetooth range limit !!!` | AI receiver variant only: starts the receiver wander flag while armed. The AI baby unit sends `WANDER` after 8+ seconds at the Bluetooth range limit. |
+| `wander cleared` | AI receiver variant only: clears the wander flag after more than 5 seconds without another `WANDER` report. |
 
 The receiver may also print `unknown msg: <text>`. It updates its own message timer before validating the Bluetooth line, so that log is not evidence of an `OK` heartbeat or a known sensor event.
 
@@ -74,6 +76,7 @@ This excerpt shows the receiver-specific portion of a `uno-room-v1` snapshot. Ti
     "armed": true,
     "fall_active": null,
     "cry_active": false,
+    "wander_active": false,
     "link_lost": false,
     "muted_until": null,
     "mute_known": false,
@@ -82,7 +85,8 @@ This excerpt shows the receiver-specific portion of a `uno-room-v1` snapshot. Ti
     "counters": {
       "fall_reports": 0,
       "cry_episodes": 0,
-      "acknowledgments": 0
+      "acknowledgments": 0,
+      "wander_reports": 0
     },
     "session_started_at": "2026-11-01T15:29:55.000Z",
     "status_fresh": true
@@ -116,6 +120,16 @@ Events use gateway receipt timestamps. A snapshot timestamp is not the time a ph
 The default live database is `server/data/auraguard-uno-room-v1-live.sqlite3`. Explicit profiles use their own live files. `--db` overrides the path; use separate files for different inputs. Event retention is 2000 rows. Compatible numeric reference integrations retain approximately 86,400 samples; no readings are fabricated for the supplied Uno. No simulator is started when hardware is absent or disconnects.
 
 Run one server worker. Close any Arduino IDE/CLI serial monitor before the gateway opens the Uno port.
+
+## AI baby unit (`esp32_baby_unit_ai` + `uno_room_receiver_ai`)
+
+The AI firmware pair keeps the `uno-room-v1` log grammar above and adds the
+two wander lines in the event table. The baby unit's Bluetooth messages are
+`OK\n`, `FALL\n`, `CRY\n` (same meanings as v5, now produced by on-device
+classifiers) plus `WANDER\n` every 2 seconds while the baby has sat at the
+Bluetooth range limit for 8+ seconds. The supplied receiver prints
+`unknown msg: WANDER`; the AI receiver variant prints the wander lines.
+See [AI.md](AI.md) for the classifiers, training, and verification.
 
 ## Appendix A: raw baby BLE lines (`baby-ble-v5`)
 

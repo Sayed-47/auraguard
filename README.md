@@ -48,6 +48,17 @@ flowchart LR
 
 The baby ESP32 is a BLE client using service `FFE0` and characteristic `FFE1`. It sends `OK`, `FALL`, and `CRY` to the room module. The Uno consumes those messages and prints its own logs; it does **not** forward every raw `OK` or `CRY` to USB. Both sensors are on the ESP32 with the supplied configuration (`LOCAL_MIC = false` on the Uno).
 
+## AI baby unit
+
+An AI firmware pair, [`esp32_baby_unit_ai`](firmware/esp32_baby_unit_ai/) and [`uno_room_receiver_ai`](firmware/uno_room_receiver_ai/), upgrades the baby unit's decisions while keeping this exact wiring, BLE route, and dashboard contract:
+
+- **Sound:** an on-device cry classifier (2 kHz burst sampling, spectral band-share and envelope features, softmax model) decides whether a loud sound is actually the baby, rejecting knocks, TV hiss, fans, and appliance tones before `CRY` is sent.
+- **Movement:** a 3-class motion classifier reads the MPU6050's gyroscope (unused by the supplied sketch) alongside acceleration to tell a real fall from play/running. AI-confirmed falls alert immediately; play-like triggers are vetoed; uncertain windows fall back to the supplied stillness gate, so the AI can never silence a real fall pattern.
+- **Bluetooth range:** the baby unit polls its link RSSI and, after 8+ seconds at the range limit, sends `WANDER` — a warning *before* the link drops. The AI receiver prints wander log lines that the gateway turns into dashboard events.
+- **Plus:** sensor fusion with alert priorities, background activity recognition (sleeping vs up and playing), and the supplied v5 fault-recovery behavior throughout.
+
+Models train offline in pure-stdlib Python ([`server/ai`](server/ai/)) and export to the firmware as a C header. See [docs/AI.md](docs/AI.md) for the pipeline, retraining, and verification, including a host-compiled cross-check that proves the firmware math matches the Python reference.
+
 | Dashboard item | Source and meaning |
 | --- | --- |
 | Room connection | Serial-port connection and fresh receiver logs. |
@@ -77,12 +88,16 @@ The receiver clears its sound flag after more than 2.5 seconds without another `
 | `docs/LAB_SETUP.md` | Setup, expected logs, physical checks, and troubleshooting. |
 | `docs/PROTOCOL.md` | Exact Uno USB protocol, API state, and advanced profile appendices. |
 | `docs/BABY_BLE_V5.md` | Supplied baby firmware's transport and detector behavior. |
+| `docs/AI.md` | AI layer: classifiers, features, training, and verification. |
 | `docs/SCREENSHOTS.md` | Visual tour and instructions for capturing real hardware screenshots. |
 | `docs/screenshots/overview-preview.svg` | Labeled illustration of the disconnected dashboard layout. |
 | `firmware/esp32_baby_unit_ble_v5/esp32_baby_unit_ble_v5.ino` | Unchanged supplied baby sketch. |
 | `firmware/uno_room_receiver_cry/uno_room_receiver_cry.ino` | Unchanged supplied room-receiver sketch. |
+| `firmware/esp32_baby_unit_ai/` | AI baby sketch: cry/fall-vs-play/range inference on-device (drop-in replacement). |
+| `firmware/uno_room_receiver_ai/` | Receiver variant that understands the AI baby unit's `WANDER` message. |
+| `firmware/tests/host_ai/` | Host-compiled cross-check of the sketch's AI math against Python. |
 | `firmware/README.md` | Supplied wiring/settings and separate legacy reference notes. |
-| `server/` | Local serial gateway, API, persistence, and tests. |
+| `server/` | Local serial gateway, API, persistence, AI pipeline (`server/ai/`), and tests. |
 | `dist/` | Browser app and bundled assets. |
 
 ## Storage and verification
