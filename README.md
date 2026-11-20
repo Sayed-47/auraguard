@@ -133,7 +133,7 @@ The interface is an original implementation informed by these public visual refe
 - [Untitled UI sales dashboard by Jordan Hughes](https://dribbble.com/shots/21695116-Sales-dashboard-Untitled-UI) for dashboard spacing and information hierarchy.
 - [Catalyst application layouts by Tailwind Labs](https://tailwindcss.com/blog/2024-05-24-catalyst-application-layouts) for horizontal application navigation and responsive layout structure.
 
-Manrope is bundled locally with its [SIL Open Font License](dist/assets/OFL-Manrope.txt), so the interface does not need a remote font request.
+Interface icons are from [Lucide](https://lucide.dev) (ISC License, © Lucide Contributors), including `baby` for the baby unit and `radio-receiver` for the room receiver. Manrope is bundled locally with its [SIL Open Font License](dist/assets/OFL-Manrope.txt), so the interface does not need a remote font request.
 
 ## Technical references
 

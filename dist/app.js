@@ -1,31 +1,35 @@
 /* AuraGuard · live receiver dashboard. */
 'use strict';
 
+/* Icons: Lucide (https://lucide.dev), ISC License (c) Lucide Contributors.
+   Semantic key names are kept stable; paths are the upstream Lucide set:
+   baby (baby unit), radio-receiver (room receiver), audio-waveform (sound),
+   triangle-alert (fall), bluetooth-off (link down), bell-off (muted), etc. */
 const paths = {
-  home: '<path d="m3 10 9-7 9 7v10h-6v-7H9v7H3z"/>',
-  signal: '<path d="M4 20v-4m5 4v-8m5 8V8m5 12V4"/>',
-  history: '<path d="M3 11a9 9 0 1 1 2.5 7M3 4v7h7M12 7v5l3 2"/>',
-  settings: '<path d="m9 3-.7 2.2-2 .9-2.1-.5-2 3.4 1.5 1.7v2.5L2.2 15l2 3.4 2.1-.5 2 .9L9 21h4l.7-2.2 2-.9 2.1.5 2-3.4-1.5-1.8v-2.5L19.8 9l-2-3.4-2.1.5-2-.9L13 3z"/><circle cx="11" cy="12" r="3"/>',
-  moon: '<path d="M21 13a9 9 0 0 1-10-10 9 9 0 1 0 10 10Z"/>',
-  bluetooth: '<path d="m7 7 10 10-5 4V3l5 4L7 17"/>',
-  cpu: '<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4m6-4v4M9 18v4m6-4v4M2 9h4m-4 6h4m12-6h4m-4 6h4"/><rect x="9" y="9" width="6" height="6" rx="1"/>',
-  base: '<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8m-4-4v4M7 8h4m-4 4h8"/>',
-  sound: '<path d="M3 9h4l5-4v14l-5-4H3zM16 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/>',
-  warning: '<path d="m12 3 10 18H2zM12 9v5m0 3v.1"/>',
-  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
-  calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 11h18M7 15h2m6 0h2"/>',
-  shield: '<path d="M12 3 4.5 6v5.5c0 4.8 4.2 7.9 7.5 9.5 3.3-1.6 7.5-4.7 7.5-9.5V6z"/><path d="m8.5 11.5 2.3 2.3 4.7-4.7"/>',
-  mute: '<path d="M18 8a6 6 0 0 0-7.5-5.8M6 6c-1 2 0 8-3 11h14M10 21h4M3 3l18 18"/>',
-  pause: '<path d="M8 4v16M16 4v16"/>',
-  off: '<path d="m3 3 18 18M8.5 8.5l7 7M5 13a4 4 0 0 0 6 6l2-2M11 7l2-2a4 4 0 1 1 6 6"/>',
-  link: '<path d="M10 13a4 4 0 0 0 6 0l4-4a4 4 0 0 0-6-6l-3 3M14 11a4 4 0 0 0-6 0l-4 4a4 4 0 0 0 6 6l3-3"/>',
-  arrow: '<path d="M4 12h16m-6-6 6 6-6 6"/>',
-  download: '<path d="M12 3v12m-5-5 5 5 5-5M4 16v4h16v-4"/>',
-  search: '<circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/>',
-  close: '<path d="m6 6 12 12M6 18 18 6"/>',
-  refresh: '<path d="M20 7v5h-5M4 17v-5h5M6.2 6a8 8 0 0 1 13.5 4M4.3 14A8 8 0 0 0 17.8 18"/>'
+  home: '<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+  signal: '<path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/>',
+  history: '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/>',
+  settings: '<path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/>',
+  moon: '<path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/>',
+  bluetooth: '<path d="m7 7 10 10-5 5V2l5 5L7 17"/>',
+  cpu: '<path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"/><path d="M15 12h.01"/><path d="M19.38 6.813A9 9 0 0 1 20.8 10.2a2 2 0 0 1 0 3.6 9 9 0 0 1-17.6 0 2 2 0 0 1 0-3.6A9 9 0 0 1 12 3c2 0 3.5 1.1 3.5 2.5s-.9 2.5-2 2.5c-.8 0-1.5-.4-1.5-1"/><path d="M9 12h.01"/>',
+  base: '<path d="M5 16v2"/><path d="M19 16v2"/><rect width="20" height="8" x="2" y="8" rx="2"/><path d="M18 12h.01"/>',
+  sound: '<path d="M2 13a2 2 0 0 0 2-2V7a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0V4a2 2 0 0 1 4 0v13a2 2 0 0 0 4 0v-4a2 2 0 0 1 2-2"/>',
+  warning: '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+  clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+  calendar: '<path d="M8 2v3"/><path d="M16 2v3"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/>',
+  shield: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+  mute: '<path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M17 17H4a1 1 0 0 1-.74-1.673C4.59 13.956 6 12.499 6 8a6 6 0 0 1 .258-1.742"/><path d="m2 2 20 20"/><path d="M8.668 3.01A6 6 0 0 1 18 8c0 2.687.77 4.653 1.707 6.05"/>',
+  pause: '<rect x="14" y="3" width="5" height="18" rx="1"/><rect x="5" y="3" width="5" height="18" rx="1"/>',
+  off: '<path d="m17 17-5 5V12l-5 5"/><path d="m2 2 20 20"/><path d="M14.5 9.5 17 7l-5-5v4.5"/>',
+  link: '<path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/>',
+  arrow: '<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>',
+  download: '<path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/>',
+  search: '<path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/>',
+  close: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+  refresh: '<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>'
 };
-const icon = (name, size = 18) => `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] || paths.signal}</svg>`;
+const icon = (name, size = 18) => `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] || paths.signal}</svg>`;
 const $ = id => document.getElementById(id);
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c]));
 const setText = (id, value) => {const element = $(id); if (element && element.textContent !== String(value)) element.textContent = String(value);};
@@ -54,7 +58,7 @@ function shortAge(milliseconds) {
 }
 function eventIcon(type) {return icon(({fall:'warning', cry:'sound', connection:'bluetooth', system:'shield'})[type], 17);}
 function brand() {
-  return `<span class="brand-mark"><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3c5.3 0 9.3 3 10.9 7.5C20.3 9.2 16 13.1 16 19 10.1 19 6.2 14.7 7.5 8.1A12 12 0 0 1 16 3Z" fill="currentColor"/><path d="M29 16c0 7.2-5.8 13-13 13-4.1 0-7.8-1.9-10.1-4.9 6.7 1.2 11-2.7 11-8.6 5.9 0 9.8-4.3 8.5-10.9A13 13 0 0 1 29 16Z" fill="currentColor" opacity=".5"/></svg></span><span class="brand-name">auraguard<span>.</span></span>`;
+  return `<span class="brand-mark"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" opacity=".3"/><g transform="translate(4.8 4.8) scale(0.6)" stroke-width="3.33"><path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"/><path d="M15 12h.01"/><path d="M19.38 6.813A9 9 0 0 1 20.8 10.2a2 2 0 0 1 0 3.6 9 9 0 0 1-17.6 0 2 2 0 0 1 0-3.6A9 9 0 0 1 12 3c2 0 3.5 1.1 3.5 2.5s-.9 2.5-2 2.5c-.8 0-1.5-.4-1.5-1"/><path d="M9 12h.01"/></g></svg></span><span class="brand-name">auraguard<span>.</span></span>`;
 }
 function navLinks() {
   return [['home','home','Overview'], ['telemetry','signal','Live feed'], ['history','history','History'], ['settings','settings','Settings']].map(([view, symbol, label]) => `<a class="nav-link ${state.view === view ? 'active' : ''}" href="#${view}" data-view="${view}" ${state.view === view ? 'aria-current="page"' : ''}>${icon(symbol, 18)}<span>${label}</span></a>`).join('');

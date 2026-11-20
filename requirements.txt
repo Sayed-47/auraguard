@@ -1,0 +1,2 @@
+# Heroku build reads requirements from the repo root; the real pins live with the server.
+-r server/requirements.txt
