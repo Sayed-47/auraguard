@@ -88,6 +88,13 @@ class AdminAuthTests(DocsTestCase):
         payload = self.client.get("/api/docs").text
         self.assertNotIn(self.token, payload)
 
+    def test_env_token_overrides_the_file_token(self):
+        import os
+        os.environ["AURAGUARD_DOCS_TOKEN"] = "env-token-for-test"
+        self.addCleanup(os.environ.pop, "AURAGUARD_DOCS_TOKEN")
+        self.assertEqual(self.admin("get", "/api/docs/admin", token="env-token-for-test").status_code, 200)
+        self.assertEqual(self.admin("get", "/api/docs/admin", token=self.token).status_code, 403)
+
 
 class PitchTests(DocsTestCase):
     def test_pitch_edit_reflects_immediately_on_public_payload(self):

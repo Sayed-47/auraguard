@@ -299,8 +299,11 @@ def register_docs_routes(app: FastAPI, settings: Any) -> None:
         return state
 
     def require_admin(request: Request) -> None:
+        # An env-set token replaces the on-disk one so hosted deploys (ephemeral
+        # filesystem, e.g. Heroku) can have a known admin credential.
+        expected = os.environ.get("AURAGUARD_DOCS_TOKEN") or store.config["admin_token"]
         token = request.headers.get("x-admin-token", "")
-        if not token or not hmac.compare_digest(token, store.config["admin_token"]):
+        if not token or not hmac.compare_digest(token, expected):
             raise HTTPException(403, "A valid X-Admin-Token header is required.")
 
     def page(name: str) -> str:

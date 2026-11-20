@@ -35,7 +35,7 @@ The final dashboard uses `uno-room-v1`, the default server profile. It displays 
 
 ## Live docs page
 
-The same gateway serves a live documentation page at **http://127.0.0.1:8000/docs**: pitch deck, architecture and data flow, on-device AI model cards read from the shipped weight files, live receiver counters and events, the running server's own API table, tech-doc links, and the team roster. Manage it at `/docs/admin` (admin token in `server/data/docs-config.json`): toggle public visibility on/off, schedule an availability window, edit every pitch section, and add team members with auto-resized photos. Everything on the page is assembled per request from the running server and the on-disk config — nothing is a static screenshot.
+The same gateway serves a live documentation page at **http://127.0.0.1:8000/docs**: pitch deck, architecture and data flow, on-device AI model cards read from the shipped weight files, live receiver counters and events, the running server's own API table, tech-doc links, and the team roster. Manage it at `/docs/admin` (admin token in `server/data/docs-config.json`, or set the `AURAGUARD_DOCS_TOKEN` environment variable to choose the token — required for hosted deploys where the filesystem is ephemeral): toggle public visibility on/off, schedule an availability window, edit every pitch section, and add team members with auto-resized photos. Everything on the page is assembled per request from the running server and the on-disk config — nothing is a static screenshot.
 
 ## Connected hardware
 
